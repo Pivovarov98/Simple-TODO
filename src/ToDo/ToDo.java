@@ -11,34 +11,22 @@ public class ToDo implements CRUDInterface {
     @Override
     public void create() {
         while (true) {
-            System.out.println("Введите номер заметки для записи от 1 до 10 или 0 для выхода");
+            System.out.println("Введите номер заметки для записи от 1 до " + data.length + " или 0 для выхода");
             int numNote = new Scanner(System.in).nextInt();
 
-            if (numNote == 0) {
+            if (isExit(numNote)) {
                 break;
-            } else if (numNote > 10 || numNote < 0) {
-                System.out.println("Вы ввели некорретный номер");
-                System.out.println("-".repeat(50));
+            } else if (isInputCorrect(numNote, "create")) {
                 continue;
             }
 
-            if (data[numNote - 1] != null) {
-                System.out.println("Под данным номером уже есть заметка.");
-                System.out.println("-".repeat(50));
-                continue;
-            }
-
-            System.out.println("-".repeat(50));
-            System.out.println("Введите свою заметку");
+            System.out.println("-".repeat(50) + "\nВведите свою заметку");
             String note = new Scanner(System.in).nextLine();
 
             data[numNote - 1] = numNote + ". " + note;
+            System.out.println("Заметка записана!\n" + "-".repeat(50));
 
-            System.out.println("Заметка записана!\n" + "-".repeat(50) + "\nЖелаете сделать ещё одну заметку?\n1 - да | 2 - нет");
-            int choice = new Scanner(System.in).nextInt();
-            if (choice == 1) {
-                continue;
-            } else if (choice == 2) {
+            if (!isContinue("create")) {
                 break;
             }
         }
@@ -58,24 +46,21 @@ public class ToDo implements CRUDInterface {
     @Override
     public void update() {
         while (true) {
-            System.out.println("Введите номер заметки для обновления от 1 до 10 или 0 для выхода");
+            System.out.println("Введите номер заметки для обновления от 1 до " + data.length + " или 0 для выхода");
             int numNote = new Scanner(System.in).nextInt();
 
-            if(isExit(numNote)){
+            if (isExit(numNote)) {
                 break;
-            }else if (isInputCorrect(numNote)){
+            } else if (isInputCorrect(numNote, "update")) {
                 continue;
             }
 
-            System.out.println("-".repeat(50));
-            System.out.println("Введите новую заметку");
+            System.out.println("-".repeat(50) + "\nВведите новую заметку");
             String note = new Scanner(System.in).nextLine();
             data[numNote - 1] = numNote + ". " + note;
-            System.out.println("Заметка обновлена!\n" + "-".repeat(50) + "\nЖелаете обновить ещё одну заметку?\n1 - да | 2 - нет");
-            int choice = new Scanner(System.in).nextInt();
-            if (choice == 1) {
-                continue;
-            } else if (choice == 2) {
+            System.out.println("Заметка обновлена!\n" + "-".repeat(50));
+
+            if (!isContinue("update")) {
                 break;
             }
         }
@@ -84,42 +69,58 @@ public class ToDo implements CRUDInterface {
     @Override
     public void delete() {
         while (true) {
-            System.out.println("Введите номер заметки для удаления от 1 до 10 или 0 для выхода");
+            System.out.println("Введите номер заметки для удаления от 1 до " + data.length + " или 0 для выхода");
             int numNote = new Scanner(System.in).nextInt();
 
-            if(isExit(numNote)){
+            if (isExit(numNote)) {
                 break;
-            }else if (isInputCorrect(numNote)){
+            } else if (isInputCorrect(numNote, "delete")) {
                 continue;
             }
 
             data[numNote - 1] = null;
             System.out.println("Запись удалена!\n" + "-".repeat(50));
 
-            System.out.println("Желаете удалить ещё одну заметку?\n1 - да | 2 - нет");
-            int choice = new Scanner(System.in).nextInt();
-            if (choice == 1) {
-                continue;
-            } else if (choice == 2) {
+            if (!isContinue("delete")) {
                 break;
             }
         }
     }
 
-    boolean isInputCorrect(int input){
-        if (input > 10 || input < 0) {
+    boolean isInputCorrect(int input, String method) {
+        if (input > data.length || input < 0) {
             System.out.println("-".repeat(50) + "\nВы ввели некорретный номер");
             return true;
         }
 
-        if (data[input - 1] == null) {
-            System.out.println("-".repeat(50) + "\nПод данным номером ещё нет записи.");
+        if (data[input - 1] != null && method.equals("create")) {
+            System.out.println("-".repeat(50) + "\nПод данным номером уже есть заметка");
+            return true;
+        }
+
+        if (data[input - 1] == null && (method.equals("update") || method.equals("delete"))) {
+            System.out.println("-".repeat(50) + "\nПод данным номером ещё нет записи");
             return true;
         }
         return false;
     }
 
-    boolean isExit(int input){
+    boolean isContinue(String method) {
+        switch (method) {
+            case "delete" -> System.out.println("Желаете удалить ещё одну заметку?\n1 - да | 2 - нет");
+            case "update" -> System.out.println("Желаете обновить ещё одну заметку?\n1 - да | 2 - нет");
+            case "create" -> System.out.println("Желаете сделать ещё одну заметку?\n1 - да | 2 - нет");
+        }
+        int choice = new Scanner(System.in).nextInt();
+
+        if (choice != 1 && choice != 2) {
+            System.out.println("Вы ввели некорретный номер\n" + "-".repeat(50));
+            isContinue(method);
+        } else return choice == 1;
+        return false;
+    }
+
+    boolean isExit(int input) {
         return input == 0;
     }
 }
