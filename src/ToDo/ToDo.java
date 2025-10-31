@@ -3,7 +3,7 @@ package ToDo;
 import java.util.Scanner;
 
 public class ToDo implements CRUDInterface {
-    String[] data = new String[10];
+    private final String[] data = new String[10];
 
     public ToDo() {
     }
@@ -87,7 +87,7 @@ public class ToDo implements CRUDInterface {
         }
     }
 
-    boolean isInputCorrect(int input, String method) {
+    private boolean isInputCorrect(int input, String method) {
         if (input > data.length || input < 0) {
             System.out.println("-".repeat(50) + "\nВы ввели некорретный номер");
             return true;
@@ -105,7 +105,7 @@ public class ToDo implements CRUDInterface {
         return false;
     }
 
-    boolean isContinue(String method) {
+    private boolean isContinue(String method) {
         switch (method) {
             case "delete" -> System.out.println("Желаете удалить ещё одну заметку?\n1 - да | 2 - нет");
             case "update" -> System.out.println("Желаете обновить ещё одну заметку?\n1 - да | 2 - нет");
@@ -120,7 +120,7 @@ public class ToDo implements CRUDInterface {
         return false;
     }
 
-    boolean isExit(int input) {
+    private boolean isExit(int input) {
         return input == 0;
     }
 }
